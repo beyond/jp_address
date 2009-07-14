@@ -1,0 +1,65 @@
+JpAddress
+=========
+
+Easy setup "ZipCode and Address" DataBase and Model.
+This plugin need FasterCSV gem and ActiveRecord::Extensions gem/plugin.
+
+
+SETUP
+=========
+
+[1st] Install needed gems/plugins
+ See below pages to install FasterCSV and ActiveRecord::Extensions
+
+ FasterCSV
+   http://fastercsv.rubyforge.org/
+   http://fastercsv.rubyforge.org/files/INSTALL.html
+ ActiveRecord::Extensions
+   http://www.continuousthinking.com/2007/7/21/activerecord-extensions-0-7-0-released
+
+[2nd] Add JpAddress DB configuration to database.yml
+ JpAddress doesn't uses the database which used your rails application.
+ You need another database for JpAddress.
+ 
+ JpAddress DB configuration (Don't change database name "jp_address")
+ % jp_address:
+ %   database: jp_address
+ %   adapter: mysql
+ %   username: root
+ %   password: root
+ %   host: localhost
+
+[3rd] Run the RakeTask
+rake jp_address:setup
+
+That's all.
+
+
+Example
+=======
+>> JpAddress[1500013]
+=> #<JpAddress id: 37749, zipcode: "1500013", prefecture: "東京都", city: "渋谷区", address: "恵比寿">
+>> JpAddress['1500013']
+>> JpAddress[0640941]
+SyntaxError: compile error
+(!! Zipcode which start with zero must be String !!)
+
+=> #<JpAddress id: 37749, zipcode: "1500013", prefecture: "東京都", city: "渋谷区", address: "恵比寿">
+>> JpAddress['0640941']
+=> #<JpAddress id: 1, jiscode: "01101", zipcode_old: "064  ", zipcode: "0640941", prefecture: "北海道", city: "札幌市中央区", address: "旭ケ丘">
+
+>> JpAddress.find_by_zipcode('1500013')
+=> #<JpAddress id: 37749, zipcode: "1500013", prefecture: "東京都", city: "渋谷区", address: "恵比寿">
+
+>> JpAddress.find_by_prefecture("東京都")
+>> JpAddress.find_by_city("渋谷区")
+>> JpAddress.find_by_address("恵比寿")
+
+>> JpAddress['0640941'].geocode
+=> #<JpAddress::Geocode:0x10bea2c @address="北海道札幌市中央区旭ケ丘", @longitude="141.321640", @latitude="43.039669">
+
+>> JpAddress['0640941'].googlemaps_url
+=> "http://maps.google.com/maps?f=q&hl=ja&geocode=&q=%E5%8C%97%E6%B5%B7%E9%81%93%E6%9C%AD%E5%B9%8C%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E6%97%AD%E3%82%B1%E4%B8%98&ie=UTF8&z=16&iwloc=addr"
+
+
+Copyright (c) 2008 Nobukazu Matake, released under the MIT license
